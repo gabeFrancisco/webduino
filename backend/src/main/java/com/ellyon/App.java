@@ -26,18 +26,43 @@ public class App {
 
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8080), 0);
 
+        // CSS
+        server.createContext("/style.css", exchange -> {
+            try {
+                var stream = App.class.getResourceAsStream("/style.css");
+
+                if (stream == null) {
+                    exchange.sendResponseHeaders(404, -1);
+                    return;
+                }
+
+                byte[] css = stream.readAllBytes();
+
+                exchange.getResponseHeaders().set("Content-Type", "text/css; charset=UTF-8");
+                exchange.sendResponseHeaders(200, css.length);
+                exchange.getResponseBody().write(css);
+
+            } finally {
+                exchange.close();
+            }
+        });
+
         // Requisições
         server.createContext("/", exchange -> {
-            var stream = App.class.getResourceAsStream("/index.html");
-            if (stream == null) {
-                throw new IllegalStateException("Arquivo index.html não encontrado!");
-            }
-            byte[] page = stream.readAllBytes();
+            try {
+                var stream = App.class.getResourceAsStream("/index.html");
+                if (stream == null) {
+                    throw new IllegalStateException("Arquivo index.html não encontrado!");
+                }
+                byte[] page = stream.readAllBytes();
 
-            exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-            exchange.sendResponseHeaders(200, page.length);
-            exchange.getResponseBody().write(page);
-            exchange.close();
+                exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+                exchange.sendResponseHeaders(200, page.length);
+                exchange.getResponseBody().write(page);
+            } finally {
+                exchange.close();
+            }
+
         });
 
         server.start();
