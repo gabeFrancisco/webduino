@@ -2,30 +2,50 @@ package com.ellyon;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-// import java.nio.file.Files;
-// import java.nio.file.Path;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpExchange;
+import java.nio.charset.StandardCharsets;
 
 public class App {
     private static SerialPort arduino;
+    private static String port = "/dev/ttyUSB0";
+
+    public static boolean setPort() {
+        arduino = SerialPort.getCommPort(port);
+        arduino.setBaudRate(9600);
+
+        if (!arduino.openPort()) {
+            System.out.println("Erro ao abrir a porta! Verifique!");
+            return false;
+        }
+
+        return true;
+    }
 
     public static void main(String[] args) throws Exception {
         // System.out.println("Deus abençoe a sua vida!");
 
         // Essa porta vai ser dinamica mais tarde!
-        arduino = SerialPort.getCommPort("/dev/ttyUSB0");
-        arduino.setBaudRate(9600);
-
-        if (!arduino.openPort()) {
-            System.out.println("Erro ao abrir a porta! Verifique!");
-            return;
-        }
 
         Thread.sleep(2000);
 
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8080), 0);
+
+        server.createContext("/connect", exchange -> {
+            try {
+                var result = setPort();
+                if (result) {
+                    sendJson(exchange, port);
+                } else {
+                    sendJson(exchange, "Nenhuma porta encontrada!");
+                }
+
+            } finally {
+                exchange.close();
+            }
+        });
 
         // CSS
         server.createContext("/style.css", exchange -> {
@@ -116,8 +136,21 @@ public class App {
         });
 
         server.start();
+
         System.out.println(
                 "Servidor iniciado em http://127.0.0.1:8080");
 
+    }
+
+    private static void sendJson(HttpExchange exchange, String json) throws IOException {
+        byte[] response = json.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().set(
+                "Content-Type", "application/json; charset=UTF-8");
+
+        exchange.sendResponseHeaders(200, response.length);
+
+        try (var output = exchange.getResponseBody()) {
+            output.write(response);
+        }
     }
 }
