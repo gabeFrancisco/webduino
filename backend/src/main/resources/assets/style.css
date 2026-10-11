@@ -33,9 +33,17 @@ header {
 
 button {
     border: 2px outset #999;
-    background-color: #ddd;
+    background-color: #eee;
     cursor: pointer;
     padding: 0.3rem 1rem 0.3rem 1rem;
+}
+
+button:hover {
+    background-color: #ccc;
+}
+
+button:active {
+    border: 2px inset #999;
 }
 
 main {

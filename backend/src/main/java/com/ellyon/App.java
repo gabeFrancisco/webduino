@@ -1,6 +1,7 @@
 package com.ellyon;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -10,36 +11,71 @@ import java.nio.charset.StandardCharsets;
 
 public class App {
     private static SerialPort arduino;
-    private static String port = "/dev/ttyUSB0";
+    private static String portPath = "";
 
     public static boolean setPort() {
-        arduino = SerialPort.getCommPort(port);
-        arduino.setBaudRate(9600);
+        SerialPort[] ports = SerialPort.getCommPorts();
 
-        if (!arduino.openPort()) {
-            System.out.println("Erro ao abrir a porta! Verifique!");
-            return false;
+        for (SerialPort port : ports) {
+            System.out.println("Procurando porta: " + port.getSystemPortPath());
+            port.setBaudRate(9600);
+
+            if (port.openPort()) {
+                arduino = port;
+
+                System.out.println("Arduino conectado em: " + port.getSystemPortPath());
+                portPath = port.getSystemPortPath();
+            }
+
+            return true;
         }
 
-        return true;
+        System.out.println("Não foi possivel encontrar uma porta!");
+        return false;
     }
 
     public static void main(String[] args) throws Exception {
+
         // System.out.println("Deus abençoe a sua vida!");
 
         // Essa porta vai ser dinamica mais tarde!
 
         Thread.sleep(2000);
+        HttpServer server = null;
 
-        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8080), 0);
+        try {
+            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8080), 0);
+        } catch (BindException ex) {
+            System.out.println("Endereço em uso!");
+        }
 
         server.createContext("/connect", exchange -> {
             try {
-                var result = setPort();
-                if (result) {
-                    sendJson(exchange, port);
-                } else {
-                    sendJson(exchange, "Nenhuma porta encontrada!");
+                if (arduino == null || !arduino.isOpen()) {
+                    if (!setPort()) {
+                        sendJson(exchange, "Falha ao abrir a porta serial");
+                        return;
+                    }
+                }
+
+                sendJson(exchange, portPath);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                try {
+                    byte[] erro = "{\"erro\":\"Erro interno no servidor\"}"
+                            .getBytes(StandardCharsets.UTF_8);
+
+                    exchange.getResponseHeaders().set(
+                            "Content-Type",
+                            "application/json; charset=UTF-8");
+
+                    exchange.sendResponseHeaders(500, erro.length);
+                    exchange.getResponseBody().write(erro);
+
+                } catch (IOException ignored) {
+                    // A conexão pode já ter sido encerrada.
                 }
 
             } finally {
