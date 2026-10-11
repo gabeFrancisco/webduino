@@ -5,21 +5,34 @@ Ultrasonic ultrasonic(4, 5);
 
 #define LED 3
 bool initialized = false;
+unsigned int prevTime = 0;
+bool ledOn = false;
 
 void blinkLed();
+
+void blinkLed()
+{
+  unsigned int actualTime = millis();
+
+  if (ledOn && actualTime - prevTime >= 100)
+  {
+    digitalWrite(LED, LOW);
+    ledOn = false;
+    prevTime = actualTime;
+  }
+  else if (!ledOn && actualTime - prevTime >= 2000)
+  {
+    digitalWrite(LED, HIGH);
+    ledOn = true;
+    prevTime = actualTime;
+  }
+}
 
 void setup()
 {
   Serial.begin(9600);
   pinMode(LED, OUTPUT);
-}
-
-void blinkLed()
-{
-  digitalWrite(LED, HIGH);
-  delay(50);
   digitalWrite(LED, LOW);
-  delay(2000);
 }
 
 void loop()
@@ -44,7 +57,7 @@ void loop()
       initialized = false;
     }
   }
-  if (!initialized)
+  else if (!initialized)
   {
     blinkLed();
   }
