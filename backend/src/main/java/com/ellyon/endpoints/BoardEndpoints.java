@@ -1,7 +1,10 @@
 package com.ellyon.endpoints;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.sun.net.httpserver.HttpContext;
@@ -13,9 +16,56 @@ public class BoardEndpoints {
     private HttpServer server;
     private SerialPort arduino;
     private String portPath = "";
+    private final AtomicReference<String> lastReading = new AtomicReference<>("Sem leitura");
 
-    public BoardEndpoints(HttpServer server) {
+    public BoardEndpoints(
+            HttpServer server) {
         this.server = server;
+    }
+
+    private void startSensorReading() {
+        arduino.setComPortTimeouts(
+                SerialPort.TIMEOUT_READ_SEMI_BLOCKING,
+                0,
+                0);
+
+        Thread thread = new Thread(() -> {
+            byte[] buffer = new byte[128];
+
+            while (arduino.isOpen()) {
+                int bytesLidos = arduino.readBytes(
+                        buffer, buffer.length);
+
+                if (bytesLidos > 0) {
+                    String dados = new String(
+                            buffer, 0, bytesLidos,
+                            StandardCharsets.UTF_8);
+
+                    System.out.print(dados);
+                }
+            }
+        });
+
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public HttpContext readUltrasonic() {
+        return this.server.createContext("/ultrasonic", exchange -> {
+            try {
+                String value = lastReading.get();
+
+                String json = "{\"valor\":\"" + value + "\"}";
+                this.sendJson(exchange, json, 200);
+
+                // try(var output = exchange.getResponseBody()){
+                // output.write(response);
+                // }
+
+            } catch (Exception e) {
+                exchange.close();
+            }
+        });
     }
 
     public boolean setPort() {
@@ -103,6 +153,7 @@ public class BoardEndpoints {
                 this.arduino.writeBytes(data, data.length);
 
                 System.out.println("INIT!!");
+                startSensorReading();
                 exchange.sendResponseHeaders(200, -1);
 
             } catch (Exception ex) {

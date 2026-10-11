@@ -11,19 +11,26 @@
 <body>
     <header>
         <div id="logo-container">
-            <img id="logo" src="assets/images/w98_computer_2.ico" alt="">
+            <!-- <img id="logo" src="assets/images/w98_computer_2.ico" alt=""> -->
+            <img id="logo" src="assets/images/w2k_ramdrive.ico" alt="">
             <h3>Webduino</h3>
         </div>
     </header>
     <main>
-        <section class="card">
-            <p>
-                Clique no botão abaixo para procurar o caminho da placa:
-            </p>
-            <button type="button" id="search_btn" name="search_btn">Procurar!</button>
-            <p>
-                <b>Placa: <span id="placa"></span></b>
-            </p>
+        <section id="search_area" class="card">
+            <div>
+                <p>
+                    Clique no botão abaixo para procurar o caminho da placa:
+                </p>
+                <button type="button" id="search_btn" name="search_btn">Procurar!</button>
+                <p>
+                    <b>Placa: <span id="placa"></span></b>
+                </p>
+
+            </div>
+            <div>
+                <img style="width: 14rem;" src="assets/images/arduino.png" alt="">
+            </div>
         </section>
         <hr />
         <section class="card" id="command_panel">

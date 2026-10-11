@@ -42,13 +42,12 @@ void loop()
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
 
-    Serial.print(ultrasonic.read());
-
     if (cmd == "INIT")
     {
-      digitalWrite(LED, HIGH);
-      Serial.print("Initialized reading");
       initialized = true;
+      digitalWrite(LED, HIGH);
+      Serial.println(ultrasonic.read());
+      // Serial.print("Initialized reading");
     }
 
     if (cmd == "STANDBY")
@@ -63,5 +62,10 @@ void loop()
   }
   else
   {
+    long distance = ultrasonic.read();
+    Serial.print("Distancia: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+    delay(200);
   }
 }

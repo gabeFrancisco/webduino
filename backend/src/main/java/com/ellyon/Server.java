@@ -28,6 +28,7 @@ public class Server {
         boardEndpoints.connect();
         boardEndpoints.standby();
         boardEndpoints.activate();
+        boardEndpoints.readUltrasonic();
 
         // ==================================================================================================
 
