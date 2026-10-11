@@ -16,7 +16,7 @@
         </div>
     </header>
     <main>
-        <div>
+        <section class="card">
             <p>
                 Clique no botão abaixo para procurar o caminho da placa:
             </p>
@@ -24,7 +24,16 @@
             <p>
                 <b>Placa: <span id="placa"></span></b>
             </p>
-        </div>
+        </section>
+        <hr />
+        <section class="card" id="command_panel">
+            <p>Os botões abaixo servem para deixar a placa em standby ou iniciar o envio e recepção de dados.</p>
+            <p>Serve para confirmar se o servidor está se comunicando corretamente com a placa.</p>
+            <button style="background-color: #c3de6a;" type="button" id="standby" name="standby">Stand By</button>
+            <button style="background-color: #70db80;" type="button" id="ativar" name="ativar">Ativar!</button>
+            <p><b>Estado: <span id="estado"></span></b></p>
+        </section>
+
     </main>
     <script src="assets/script.js"></script>
 </body>

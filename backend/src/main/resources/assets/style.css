@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    background-color: white;
+    background-color: #f5f5f5;
 }
 
 header {
@@ -32,14 +32,17 @@ header {
 }
 
 button {
-    border: 2px outset #999;
-    background-color: #eee;
-    cursor: pointer;
+    border: 2px outset #888;
+    background-color: #c7d2d8;
     padding: 0.3rem 1rem 0.3rem 1rem;
 }
 
+button:hover:enabled {
+    cursor: pointer;
+}
+
 button:hover {
-    background-color: #ccc;
+    background-color: #b0b9bd;
 }
 
 button:active {
@@ -47,5 +50,15 @@ button:active {
 }
 
 main {
-    margin: 2rem;
+    margin: 1.5rem 2rem;
+}
+
+hr {
+    margin: 1rem 0;
+}
+
+.card {
+    border: 1px outset #999;
+    background-color: #ddd;
+    padding: 0.3rem 1rem 0.3rem 1rem;
 }
