@@ -44,12 +44,11 @@ public class BoardEndpoints {
             try {
                 if (arduino == null || !arduino.isOpen()) {
                     if (!setPort()) {
-                        sendJson(exchange, "Falha ao abrir a porta serial");
-                        return;
+                        sendJson(exchange, "Falha ao abrir a porta serial", 500);
                     }
                 }
 
-                sendJson(exchange, portPath);
+                sendJson(exchange, portPath, 200);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -66,7 +65,7 @@ public class BoardEndpoints {
                     exchange.getResponseBody().write(erro);
 
                 } catch (IOException ignored) {
-                    // A conexão pode já ter sido encerrada.
+
                 }
 
             } finally {
@@ -75,12 +74,58 @@ public class BoardEndpoints {
         });
     }
 
-    private void sendJson(HttpExchange exchange, String json) throws IOException {
+    public HttpContext standby() {
+        return this.server.createContext("/standby", exchange -> {
+            String cmd = "STANDBY\n";
+            byte[] data = cmd.getBytes();
+
+            try {
+                this.arduino.writeBytes(data, data.length);
+
+                System.out.println("STANDBY!!");
+                exchange.sendResponseHeaders(200, -1);
+
+            } catch (Exception ex) {
+                System.out.println("Erro ao enviar comando STANDBY" + ex.getMessage());
+                exchange.sendResponseHeaders(500, -1);
+            } finally {
+                exchange.close();
+            }
+        });
+    }
+
+    public HttpContext activate() {
+        return this.server.createContext("/activate", exchange -> {
+            String cmd = "INIT\n";
+            byte[] data = cmd.getBytes();
+
+            try {
+                this.arduino.writeBytes(data, data.length);
+
+                System.out.println("INIT!!");
+                exchange.sendResponseHeaders(200, -1);
+
+            } catch (Exception ex) {
+                System.out.println("Erro ao enviar comando INIT" + ex.getMessage());
+                exchange.sendResponseHeaders(500, -1);
+            } finally {
+                exchange.close();
+            }
+        });
+    }
+
+    private void sendJson(HttpExchange exchange, String json, int code) throws IOException {
+
+        if (json == null || json.isEmpty()) {
+            exchange.sendResponseHeaders(code, -1);
+            exchange.close();
+            return;
+        }
         byte[] response = json.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set(
                 "Content-Type", "application/json; charset=UTF-8");
 
-        exchange.sendResponseHeaders(200, response.length);
+        exchange.sendResponseHeaders(code, response.length);
 
         try (var output = exchange.getResponseBody()) {
             output.write(response);

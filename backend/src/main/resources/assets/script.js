@@ -36,19 +36,34 @@ search_btn.addEventListener("click", function () {
 })
 
 standby_btn.addEventListener("click", function () {
-    estado.innerText = "StandBy";
-    estado.style.color = "#85871f"
+    setStandBy();
 })
 
 ativar_btn.addEventListener("click", function () {
-    estado.innerText = "Ativada!";
-    estado.style.color = "#1a6e2c"
+    setActivate();
 })
 
-async function setStandBy() {
-    const response = await getFetchResult("/standby")
+async function setActivate() {
+    const response = await getFetchResult("/activate");
     if (!response.ok) {
+        estado.innerHTML = "Erro! Verifique o servidor!"
+        estado.style.color = "red";
+    }
+    else {
+        estado.innerText = "Ativada!";
+        estado.style.color = "#1a6e2c"
+    }
+}
 
+async function setStandBy() {
+    const response = await getFetchResult("/standby", "POST");
+    if (!response.ok) {
+        estado.innerHTML = "Erro! Verifique o servidor!"
+        estado.style.color = "red";
+    }
+    else {
+        estado.innerText = "StandBy";
+        estado.style.color = "#85871f"
     }
 
 }
@@ -58,7 +73,7 @@ async function setAtivar() {
 }
 
 async function search() {
-    const response = await getFetchResult("/connect")
+    const response = await getFetchResult("/connect", "POST")
     if (!response.ok) {
         placa.innerText = "Não encontrada!"
         connected = false;
@@ -67,14 +82,14 @@ async function search() {
         const result = await response.text();
         placa.innerText = result;
         connected = true;
+        enableCommandPannelInputs()
     }
 
-    enableCommandPannelInputs()
 }
 
-async function getFetchResult(route) {
+async function getFetchResult(route, method) {
     try {
-        const response = await fetch(route);
+        const response = await fetch(route, { method: method });
         return response;
     }
     catch (err) {

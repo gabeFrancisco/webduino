@@ -1,4 +1,7 @@
 #include <Arduino.h>
+#include <Ultrasonic.h>
+
+Ultrasonic ultrasonic(4, 5);
 
 #define LED 3
 bool initialized = false;
@@ -26,6 +29,8 @@ void loop()
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
 
+    Serial.print(ultrasonic.read());
+
     if (cmd == "INIT")
     {
       digitalWrite(LED, HIGH);
@@ -33,7 +38,7 @@ void loop()
       initialized = true;
     }
 
-    if (cmd == "STOP")
+    if (cmd == "STANDBY")
     {
       Serial.print("Exiting...");
       initialized = false;

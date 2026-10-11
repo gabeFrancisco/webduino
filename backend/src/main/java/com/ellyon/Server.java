@@ -26,6 +26,8 @@ public class Server {
 
         boardEndpoints.setPort();
         boardEndpoints.connect();
+        boardEndpoints.standby();
+        boardEndpoints.activate();
 
         // ==================================================================================================
 
