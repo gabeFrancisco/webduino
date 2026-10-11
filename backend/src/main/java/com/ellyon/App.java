@@ -1,5 +1,6 @@
 package com.ellyon;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 // import java.nio.file.Files;
 // import java.nio.file.Path;
@@ -42,6 +43,55 @@ public class App {
                 exchange.sendResponseHeaders(200, css.length);
                 exchange.getResponseBody().write(css);
 
+            } finally {
+                exchange.close();
+            }
+        });
+
+        // Assets
+        server.createContext("/assets/", exchange -> {
+            String caminho = exchange.getRequestURI().getPath();
+
+            if (caminho.contains("..") || caminho.contains("\\")) {
+                exchange.sendResponseHeaders(400, -1);
+                exchange.close();
+                return;
+            }
+
+            String recurso = caminho.substring(1);
+
+            try (var stream = App.class.getClassLoader()
+                    .getResourceAsStream(recurso)) {
+
+                if (stream == null) {
+                    exchange.sendResponseHeaders(404, -1);
+                    exchange.close();
+                    return;
+                }
+
+                byte[] dados = stream.readAllBytes();
+
+                String tipo = switch (recurso.substring(
+                        recurso.lastIndexOf('.') + 1).toLowerCase()) {
+                    case "css" -> "text/css";
+                    case "js" -> "text/javascript";
+                    case "png" -> "image/png";
+                    case "jpg", "jpeg" -> "image/jpeg";
+                    case "svg" -> "image/svg+xml";
+                    case "gif" -> "image/gif";
+                    case "webp" -> "image/webp";
+                    case "ico" -> "image/x-icon";
+                    default -> "application/octet-stream";
+                };
+
+                exchange.getResponseHeaders().set(
+                        "Content-Type", tipo);
+
+                exchange.sendResponseHeaders(200, dados.length);
+                exchange.getResponseBody().write(dados);
+
+            } catch (IOException e) {
+                e.printStackTrace();
             } finally {
                 exchange.close();
             }
