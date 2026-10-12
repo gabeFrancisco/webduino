@@ -1,5 +1,6 @@
 # Webduino - Gateway para leitura e acionamento de sensores via browser
-<img width="1085" height="568" alt="webduino" src="https://github.com/user-attachments/assets/cdadb749-65bd-4ec4-90e2-dfacf394a3f2" />
+<img width="1366" height="625" alt="webduino" src="https://github.com/user-attachments/assets/11fe4a6c-4f61-46b3-9b7c-325c4afd479e" />
+
 
 ## - Projeto de estudo somente.
 
