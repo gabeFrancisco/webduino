@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webduino</title>
+    <link rel="icon" href="assets//images/w2k_ramdrive.ico" />
     <link rel="stylesheet" href="assets/style.css">
 </head>
 
@@ -33,12 +33,77 @@
             </div>
         </section>
         <hr />
-        <section class="card" id="command_panel">
-            <p>Os botões abaixo servem para deixar a placa em standby ou iniciar o envio e recepção de dados.</p>
-            <p>Serve para confirmar se o servidor está se comunicando corretamente com a placa.</p>
-            <button style="background-color: #c3de6a;" type="button" id="standby" name="standby">Stand By</button>
-            <button style="background-color: #70db80;" type="button" id="ativar" name="ativar">Ativar!</button>
-            <p><b>Estado: <span id="estado"></span></b></p>
+        <div class="inline">
+            <section style="width: 100%;" class="card" id="command_panel">
+
+                <p style="font-size: 12px;">Os botões abaixo servem para deixar a placa em standby ou iniciar o envio e
+                    recepção de dados.</p>
+                <p style="font-size: 12px;">Serve para confirmar se o servidor está se comunicando corretamente com a
+                    placa.</p>
+
+                <button style="background-color: #c3de6a;" type="button" id="standby" name="standby">Stand By</button>
+                <button style="background-color: #70db80;" type="button" id="ativar" name="ativar">Ativar!</button>
+                <p><b>Estado: <span id="estado"></span></b></p>
+            </section>
+
+            <section style="width: 100%;" class="card">
+                <h6 style="margin: 3px; text-align: center;">Dados gerais:</h6>
+                <hr style="margin: 2px;">
+                <p style="color:#1c559b">Temperatura do Ar: 22ºC</p>
+                <p style="color:#3f5506">Relés acionados: 2</p>
+            </section>
+        </div>
+
+        <hr>
+        <section id="relay_panel" class="card">
+            <div class="card relay">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <b>Relé #1</b>
+                    <img class="relay_icon" src="assets//images/relay.png" alt="">
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div>
+                        <label for="">Nome: </label>
+                        <input type="text">
+                    </div>
+                    <button class="relay_btn" style="background-color: #70db80;">|</button>
+                    <button class="relay_btn" style="background-color: #e66a6a;">O</button>
+                    <p><b>Estado: <span>Ativado</span></b></p>
+                </div>
+            </div>
+
+            <div class="card relay">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <b>Relé #2</b>
+                    <img class="relay_icon" src="assets//images/relay.png" alt="">
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div>
+                        <label for="">Nome: </label>
+                        <input type="text">
+                    </div>
+                    <button class="relay_btn" style="background-color: #70db80;">|</button>
+                    <button class="relay_btn" style="background-color: #e66a6a;">O</button>
+                    <p><b>Estado: <span>Desativado</span></b></p>
+                </div>
+            </div>
+
+            <div class="card relay">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <b>Relé #3</b>
+                    <img class="relay_icon" src="assets//images/relay.png" alt="">
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div>
+                        <label for="">Nome: </label>
+                        <input type="text">
+                    </div>
+                    <button class="relay_btn" style="background-color: #70db80;">|</button>
+                    <button class="relay_btn" style="background-color: #e66a6a;">O</button>
+                    <p><b>Estado: <span>Ativado</span></b></p>
+                </div>
+            </div>
+
         </section>
 
     </main>

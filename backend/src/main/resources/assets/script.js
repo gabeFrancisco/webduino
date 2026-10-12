@@ -6,10 +6,12 @@ let connected = false;
 const placa = document.getElementById("placa");
 const estado = document.getElementById("estado");
 
+const relay_panel = document.getElementById("relay_panel")
+
 window.addEventListener('load', function () {
     placa.innerText = " - "
     estado.innerText = " - "
-    enableCommandPannelInputs();
+    // enableCommandPannelInputs();
 })
 
 function enableCommandPannelInputs() {
